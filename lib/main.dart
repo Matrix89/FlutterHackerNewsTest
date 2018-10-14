@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart' as launcher;
+import 'package:flutter_html_widget/flutter_html_widget.dart';
 
 void main() => runApp(new MyApp());
 
@@ -92,7 +93,7 @@ class _CommentsState extends State<CommentsPage> {
         itemCount: comments.length,
         itemBuilder: (context, i) {
           final comment = comments[i];
-          return ListTile(title: new Text(comment.text));
+          return ListTile(title: new HtmlWidget(html: comment.text));
         },
         separatorBuilder: (c, i) => Divider(color: Colors.blue),
       ));
