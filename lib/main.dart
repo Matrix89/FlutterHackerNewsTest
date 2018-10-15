@@ -29,13 +29,12 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   Future<List<Item>> fetchNews() async {
     final postList = (await http
-        .get("https://hacker-news.firebaseio.com/v0/topstories.json"))
+            .get("https://hacker-news.firebaseio.com/v0/topstories.json"))
         .body;
-    final postIds = postList.replaceFirst("[", "").split(
-        ","); /* please don't kill me */
+    final postIds =
+        postList.replaceFirst("[", "").split(","); /* please don't kill me */
     return Future.wait(postIds.getRange(0, 10).map((v) => Item.fetch(v)));
   }
 
@@ -45,33 +44,34 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           title: Text("Articles"),
         ),
-        body: FutureBuilder(future: fetchNews(), builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return ListView(
-              children: (snapshot.data as List<Item>)
-                  .map((Item news) =>
-                  ListTile(
-                      onTap: news.descendants != 0 ? () {
-                        launcher.launch(news.url);
-                      } : null,
-                      onLongPress: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                new Comments(news.kids)));
-                      },
-                      subtitle: Row(children: <Widget>[
-                        Text("comments: ${news.descendants} score: ${news
-                            .score}")
-                      ]),
-                      title: Text(news.title)))
-                  .toList(),
-            );
-        }
-        return new LinearProgressIndicator();
-
-        }));
-    /* */
+        body: FutureBuilder(
+            future: fetchNews(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return ListView(
+                  children: (snapshot.data as List<Item>)
+                      .map((Item news) => ListTile(
+                          onTap: news.descendants != 0
+                              ? () {
+                                  launcher.launch(news.url);
+                                }
+                              : null,
+                          onLongPress: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        new Comments(news.kids)));
+                          },
+                          subtitle: Row(children: <Widget>[
+                            Text(
+                                "comments: ${news.descendants} score: ${news.score}")
+                          ]),
+                          title: Text(news.title)))
+                      .toList(),
+                );
+              }
+              return Center(child: CircularProgressIndicator());
+            }));
   }
 }
