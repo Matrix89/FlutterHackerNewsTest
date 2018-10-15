@@ -55,35 +55,28 @@ class _CommentsState extends State<CommentsPage> {
   List<Item> comments = List();
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-      appBar: AppBar(title: Text("Comments")),
-      body: ListView.separated(
-        itemCount: comments.length,
-        itemBuilder: (context, i) {
-          final comment = comments[i];
-          return ListTile(title: new HtmlWidget(html: comment.text));
-        },
-        separatorBuilder: (c, i) => Divider(color: Colors.blue),
-      ));
+  Widget build(BuildContext context) =>
+      Scaffold(
+          appBar: AppBar(title: Text("Comments")),
+          body: ListView.separated(
+            itemCount: comments.length,
+            itemBuilder: (context, i) {
+              final comment = comments[i];
+              return ListTile(title: new HtmlWidget(html: comment.text));
+            },
+            separatorBuilder: (c, i) => Divider(color: Colors.blue),
+          ));
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<Item> news = new List();
 
   Future<List<Item>> fetchNews() async {
     final postList = (await http
-            .get("https://hacker-news.firebaseio.com/v0/topstories.json"))
+        .get("https://hacker-news.firebaseio.com/v0/topstories.json"))
         .body;
-    final postIds = postList.replaceFirst("[", "").split(","); /* please don't kill me */
+    final postIds = postList.replaceFirst("[", "").split(
+        ","); /* please don't kill me */
     return Future.wait(postIds.getRange(0, 10).map((v) => Item.fetch(v)));
-  }
-
-  _MyHomePageState() {
-    fetchNews().then((a) {
-      setState(() {
-        news.addAll(a);
-      });
-    });
   }
 
   @override
@@ -92,23 +85,33 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           title: Text("Articles"),
         ),
-        body: ListView(
-          children: news
-              .map((Item news) => ListTile(
-                  onTap: news.descendants != 0 ? () {
-                    launcher.launch(news.url);
-                  } : null,
-                  onLongPress: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => new CommentsPage(news.kids)));
-                  },
-                  subtitle: Row(children: <Widget>[
-                    Text("comments: ${news.descendants} score: ${news.score}")
-                  ]),
-                  title: Text(news.title)))
-              .toList(),
-        ));
+        body: FutureBuilder(future: fetchNews(), builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return ListView(
+              children: (snapshot.data as List<Item>)
+                  .map((Item news) =>
+                  ListTile(
+                      onTap: news.descendants != 0 ? () {
+                        launcher.launch(news.url);
+                      } : null,
+                      onLongPress: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                new CommentsPage(news.kids)));
+                      },
+                      subtitle: Row(children: <Widget>[
+                        Text("comments: ${news.descendants} score: ${news
+                            .score}")
+                      ]),
+                      title: Text(news.title)))
+                  .toList(),
+            );
+        }
+        return new LinearProgressIndicator();
+
+        }));
+    /* */
   }
 }
