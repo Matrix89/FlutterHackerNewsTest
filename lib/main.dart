@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_app/data/Item.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart' as launcher;
 import 'package:flutter_html_widget/flutter_html_widget.dart';
@@ -28,38 +28,6 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => new _MyHomePageState();
 }
 
-class Item {
-  final int id;
-  final String title;
-  final String url;
-  final String text;
-  final int score;
-  final int descendants;
-  final List<String> kids;
-
-  Item({this.id, this.title, this.url, this.text, this.score, this.descendants, this.kids});
-
-  factory Item.fromJson(Map<String, dynamic> json) {
-    final String type = json['type'];
-    return Item(
-        id: json['id'],
-        title: json['title'],
-        url: json['url'],
-        text: json['text'] != null ? json['text'] : "",
-        score: json['score'],
-        descendants: json['descendants'],
-        kids: json['kids'] != null
-            ? (json['kids'] as List<dynamic>).map((v) => "$v").toList()
-            : List<String>());
-  }
-}
-
-Future<Item> fetchItem(String id) async {
-  return http
-      .get("https://hacker-news.firebaseio.com/v0/item/$id.json")
-      .then((v) => Item.fromJson(jsonDecode(v.body)));
-}
-
 class CommentsPage extends StatefulWidget {
   List<String> ids;
 
@@ -73,7 +41,7 @@ class CommentsPage extends StatefulWidget {
 
 class _CommentsState extends State<CommentsPage> {
   Future<List<Item>> fetchComments(List<String> ids) =>
-      Future.wait(ids.map((id) => fetchItem(id)));
+      Future.wait(ids.map((id) => Item.fetch(id)));
 
   _CommentsState(List<String> ids) {
     fetchComments(ids).then((l) {
@@ -107,7 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
             .get("https://hacker-news.firebaseio.com/v0/topstories.json"))
         .body;
     final postIds = postList.replaceFirst("[", "").split(","); /* please don't kill me */
-    return Future.wait(postIds.getRange(0, 10).map((v) => fetchItem(v)));
+    return Future.wait(postIds.getRange(0, 10).map((v) => Item.fetch(v)));
   }
 
   _MyHomePageState() {
