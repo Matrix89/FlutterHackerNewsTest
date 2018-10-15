@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/data/Item.dart';
+import 'package:flutter_app/page/Comments.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart' as launcher;
-import 'package:flutter_html_widget/flutter_html_widget.dart';
 
 void main() => runApp(new MyApp());
 
@@ -26,46 +26,6 @@ class MyHomePage extends StatefulWidget {
 
   @override
   _MyHomePageState createState() => new _MyHomePageState();
-}
-
-class CommentsPage extends StatefulWidget {
-  List<String> ids;
-
-  CommentsPage(List<String> ids) {
-    this.ids = ids;
-  }
-
-  @override
-  State<StatefulWidget> createState() => _CommentsState(ids);
-}
-
-class _CommentsState extends State<CommentsPage> {
-  Future<List<Item>> fetchComments(List<String> ids) =>
-      Future.wait(ids.map((id) => Item.fetch(id)));
-
-  _CommentsState(List<String> ids) {
-    fetchComments(ids).then((l) {
-      l.forEach((comment) => print(comment.text));
-      setState(() {
-        comments.addAll(l);
-      });
-    });
-  }
-
-  List<Item> comments = List();
-
-  @override
-  Widget build(BuildContext context) =>
-      Scaffold(
-          appBar: AppBar(title: Text("Comments")),
-          body: ListView.separated(
-            itemCount: comments.length,
-            itemBuilder: (context, i) {
-              final comment = comments[i];
-              return ListTile(title: new HtmlWidget(html: comment.text));
-            },
-            separatorBuilder: (c, i) => Divider(color: Colors.blue),
-          ));
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -99,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                new CommentsPage(news.kids)));
+                                new Comments(news.kids)));
                       },
                       subtitle: Row(children: <Widget>[
                         Text("comments: ${news.descendants} score: ${news
