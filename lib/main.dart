@@ -1,11 +1,5 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_app/data/Item.dart';
-import 'package:flutter_app/page/Comments.dart';
 import 'package:flutter_app/page/News.dart';
-import 'package:http/http.dart' as http;
-import 'package:url_launcher/url_launcher.dart' as launcher;
 
 void main() => runApp(new MyApp());
 
@@ -17,19 +11,19 @@ class MyApp extends StatelessWidget {
       theme: new ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: new MyHomePage(),
+      home: new HomePage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage();
+class HomePage extends StatefulWidget {
+  HomePage();
 
   @override
-  _MyHomePageState createState() => new _MyHomePageState();
+  _HomePageState createState() => new _HomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
