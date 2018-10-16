@@ -5,14 +5,22 @@ import 'package:flutter_app/data/Item.dart';
 import 'package:url_launcher/url_launcher.dart' as launcher;
 
 class News extends StatefulWidget {
+  final String endpoint;
+
+  News(this.endpoint);
+
   @override
-  _NewsState createState() => _NewsState();
+  _NewsState createState() => _NewsState(endpoint);
 }
 
 class _NewsState extends State<News> {
+  final String endpoint;
+
+  _NewsState(this.endpoint);
+
   Future<List<Item>> fetchNews() async {
     final postList = (await http
-            .get("https://hacker-news.firebaseio.com/v0/topstories.json"))
+            .get("https://hacker-news.firebaseio.com/v0/$endpoint.json"))
         .body;
     final postIds =
         postList.replaceFirst("[", "").split(","); /* please don't kill me */

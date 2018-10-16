@@ -9,7 +9,7 @@ class MyApp extends StatelessWidget {
     return new MaterialApp(
       title: 'Flutter Demo',
       theme: new ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.deepOrange,
       ),
       home: new HomePage(),
     );
@@ -26,9 +26,16 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: new AppBar(title: new Text("News")),
-      body: new News(),
-    );
+    return DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          appBar: AppBar(title: Text("The Hacker News"),
+              bottom: TabBar(tabs: [Tab(text: "News"), Tab(text: "Show"), Tab(text: "Ask")])),
+          body: TabBarView(children: [
+            new News("topstories"),
+            new News("showstories"),
+            new News("askstories"),
+          ]),
+        ));
   }
 }
