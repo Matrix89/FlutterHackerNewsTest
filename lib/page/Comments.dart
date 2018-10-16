@@ -3,25 +3,17 @@ import 'package:flutter_app/data/Item.dart';
 import 'package:flutter_html_widget/flutter_html_widget.dart';
 
 class Comments extends StatefulWidget {
-  List<String> ids;
+  final List<String> ids;
 
-  Comments(List<String> kids) {
-    this.ids = kids;
-  }
+  Comments(this.ids);
 
   @override
-  _CommentsState createState() => _CommentsState(ids);
+  _CommentsState createState() => _CommentsState();
 }
 
 class _CommentsState extends State<Comments> {
-  List<String> ids;
-
-  _CommentsState(List<String> ids) {
-    this.ids = ids;
-  }
-
   Future<List<Item>> fetchComments() =>
-      Future.wait(ids.map((id) => Item.fetch(id)));
+      Future.wait(widget.ids.map((id) => Item.fetch(id)));
 
   @override
   Widget build(BuildContext context) {

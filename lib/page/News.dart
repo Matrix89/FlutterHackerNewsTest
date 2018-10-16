@@ -10,17 +10,13 @@ class News extends StatefulWidget {
   News(this.endpoint);
 
   @override
-  _NewsState createState() => _NewsState(endpoint);
+  _NewsState createState() => _NewsState();
 }
 
 class _NewsState extends State<News> {
-  final String endpoint;
-
-  _NewsState(this.endpoint);
-
   Future<List<Item>> fetchNews() async {
     final postList = (await http
-            .get("https://hacker-news.firebaseio.com/v0/$endpoint.json"))
+            .get("https://hacker-news.firebaseio.com/v0/${widget.endpoint}.json"))
         .body;
     final postIds =
         postList.replaceFirst("[", "").split(","); /* please don't kill me */
