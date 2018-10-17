@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'Comments.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -18,9 +20,8 @@ class _NewsState extends State<News> {
     final postList = (await http
             .get("https://hacker-news.firebaseio.com/v0/${widget.endpoint}.json"))
         .body;
-    final postIds =
-        postList.replaceFirst("[", "").split(","); /* please don't kill me */
-    return Future.wait(postIds.getRange(0, 10).map((v) => Item.fetch(v)));
+    List<dynamic> postIds = jsonDecode(postList);
+    return Future.wait(postIds.getRange(0, 10).map((v) => Item.fetch("$v")));
   }
 
   @override
