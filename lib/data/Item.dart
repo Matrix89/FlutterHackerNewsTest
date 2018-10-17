@@ -25,11 +25,10 @@ class Item {
             : List<String>());
   }
 
-  static Future<Item> fetch(String id) async {
-    return http
+  static Future<Item> fetch(String id, http.Client client) async {
+    return client
         .get("https://hacker-news.firebaseio.com/v0/item/$id.json")
         .then((v) => Item.fromJson(jsonDecode(v.body)));
   }
-
 }
 

@@ -17,11 +17,14 @@ class News extends StatefulWidget {
 
 class _NewsState extends State<News> {
   Future<List<Item>> fetchNews() async {
-    final postList = (await http
-            .get("https://hacker-news.firebaseio.com/v0/${widget.endpoint}.json"))
+    final postList = (await http.get(
+            "https://hacker-news.firebaseio.com/v0/${widget.endpoint}.json"))
         .body;
     List<dynamic> postIds = jsonDecode(postList);
-    return Future.wait(postIds.getRange(0, 10).map((v) => Item.fetch("$v")));
+    final client = http.Client();
+    return Future.wait(
+            postIds.getRange(0, 10).map((v) => Item.fetch("$v", client)))
+        .whenComplete(() => client.close());
   }
 
   @override
