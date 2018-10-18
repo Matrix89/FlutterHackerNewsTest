@@ -21,25 +21,25 @@ class _CommentsState extends State<Comments> {
     return FutureBuilder(
         future: fetchComments(ids),
         builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            final data = snapshot.data as List<Item>;
-            return SingleChildScrollView(
-                child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: data
-                        .map((c) => Padding(
-                            padding: EdgeInsets.only(left: 10),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                HtmlWidget(html: c.text),
-                                Divider(color: Colors.orange),
-                                _buildCommentColumn(c.kids),
-                              ],
-                            )))
-                        .toList()));
+          if (!snapshot.hasData) {
+            return LinearProgressIndicator();
           }
-          return LinearProgressIndicator();
+          final data = snapshot.data as List<Item>;
+          return SingleChildScrollView(
+              child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: data
+                      .map((c) => Padding(
+                          padding: EdgeInsets.only(left: 10),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              HtmlWidget(html: c.text),
+                              Divider(color: Colors.orange),
+                              _buildCommentColumn(c.kids),
+                            ],
+                          )))
+                      .toList()));
         });
   }
 

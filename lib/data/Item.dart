@@ -20,10 +20,8 @@ class Item {
       id: json['id'],
       title: json['title'],
       url: json['url'],
-      text: json['text'] != null ? json['text'] : "",
+      text: json['text'] ?? "",
       score: json['score'],
-      descendants: json['descendants'] != null ? json['descendants'] : 0,
-      kids: json['kids'] != null
-          ? (json['kids'] as List).cast<int>()
-          : List<int>());
+      descendants: json['descendants'] ?? 0,
+      kids: (json['kids'] as List)?.cast<int>() ?? List<int>());
 }

@@ -26,31 +26,28 @@ class _NewsState extends State<News> {
     return FutureBuilder(
         future: fetchNews(),
         builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return ListView(
-              children: (snapshot.data as List<Item>)
-                  .map((Item news) => ListTile(
-                      onTap: news.descendants != 0
-                          ? () {
-                              launcher.launch(news.url);
-                            }
-                          : null,
-                      onLongPress: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    new Comments(news.kids, widget.api)));
-                      },
-                      subtitle: Row(children: <Widget>[
-                        Text(
-                            "comments: ${news.descendants} score: ${news.score}")
-                      ]),
-                      title: Text(news.title)))
-                  .toList(),
-            );
+          if (!snapshot.hasData) {
+            return Center(child: CircularProgressIndicator());
           }
-          return Center(child: CircularProgressIndicator());
+          return ListView(
+            children: (snapshot.data as List<Item>)
+                .map((Item news) => ListTile(
+                    onTap: news.descendants != 0
+                        ? () => launcher.launch(news.url)
+                        : null,
+                    onLongPress: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  Comments(news.kids, widget.api)));
+                    },
+                    subtitle: Row(children: <Widget>[
+                      Text("comments: ${news.descendants} score: ${news.score}")
+                    ]),
+                    title: Text(news.title)))
+                .toList(),
+          );
         });
   }
 }
