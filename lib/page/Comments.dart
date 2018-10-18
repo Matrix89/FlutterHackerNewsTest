@@ -14,8 +14,34 @@ class Comments extends StatefulWidget {
 }
 
 class _CommentsState extends State<Comments> {
-  Future<List<Item>> fetchComments() =>
-      Future.wait(widget.ids.map((id) => widget.api.item(id)));
+  Future<List<Item>> fetchComments(List<int> ids) =>
+      Future.wait(ids.map((id) => widget.api.item(id)).toList());
+
+  Widget _buildCommentColumn(List<int> ids) {
+    return FutureBuilder(
+        future: fetchComments(ids),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            final data = snapshot.data as List<Item>;
+            return SingleChildScrollView(
+                child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: data
+                        .map((c) => Padding(
+                            padding: EdgeInsets.only(left: 10),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                HtmlWidget(html: c.text),
+                                Divider(color: Colors.orange),
+                                _buildCommentColumn(c.kids),
+                              ],
+                            )))
+                        .toList()));
+          }
+          return LinearProgressIndicator();
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,21 +49,7 @@ class _CommentsState extends State<Comments> {
       appBar: AppBar(
         title: Text("Comments"),
       ),
-      body: FutureBuilder(
-          future: fetchComments(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              final data = snapshot.data as List<Item>;
-
-              return ListView.separated(
-                  itemBuilder: (context, i) =>
-                      ListTile(title: HtmlWidget(html: data[i].text)),
-                  separatorBuilder: (context, i) => Divider(color: Colors.blue),
-                  itemCount: data.length);
-            }
-
-            return LinearProgressIndicator();
-          }),
+      body: _buildCommentColumn(widget.ids),
     );
   }
 }
