@@ -1,31 +1,25 @@
-import 'dart:convert';
+import 'package:flutter_app/HackerNews.dart';
 
 import 'Comments.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_app/data/Item.dart';
 import 'package:url_launcher/url_launcher.dart' as launcher;
 
 class News extends StatefulWidget {
+  final HackerNews api;
   final String endpoint;
 
-  News(this.endpoint);
+  News(this.endpoint, this.api);
 
   @override
   _NewsState createState() => _NewsState();
 }
 
 class _NewsState extends State<News> {
-  Future<List<Item>> fetchNews() async {
-    final postList = (await http.get(
-            "https://hacker-news.firebaseio.com/v0/${widget.endpoint}.json"))
-        .body;
-    List<dynamic> postIds = jsonDecode(postList);
-    final client = http.Client();
-    return Future.wait(
-            postIds.getRange(0, 10).map((v) => Item.fetch("$v", client)))
-        .whenComplete(() => client.close());
-  }
+  Future<List<Item>> fetchNews() async => widget.api
+      .top(widget.endpoint)
+      .then((top) => top.getRange(0, 10))
+      .then((top) => Future.wait(top.map((id) => widget.api.item(id))));
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +39,8 @@ class _NewsState extends State<News> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => new Comments(news.kids)));
+                                builder: (context) =>
+                                    new Comments(news.kids, widget.api)));
                       },
                       subtitle: Row(children: <Widget>[
                         Text(

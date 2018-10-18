@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/HackerNews.dart';
 import 'package:flutter_app/page/News.dart';
 
 void main() => runApp(new MyApp());
@@ -24,6 +25,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final HackerNews api = HackerNews();
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -32,9 +35,9 @@ class _HomePageState extends State<HomePage> {
           appBar: AppBar(title: Text("The Hacker News"),
               bottom: TabBar(tabs: [Tab(text: "News"), Tab(text: "Show"), Tab(text: "Ask")])),
           body: TabBarView(children: [
-            new News("topstories"),
-            new News("showstories"),
-            new News("askstories"),
+            new News("topstories", api),
+            new News("showstories", api),
+            new News("askstories", api),
           ]),
         ));
   }
