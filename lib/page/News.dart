@@ -16,38 +16,41 @@ class News extends StatefulWidget {
 }
 
 class _NewsState extends State<News> {
-  Future<List<Item>> fetchNews() async => widget.api
-      .top(widget.endpoint)
-      .then((top) => top.getRange(0, 10))
-      .then((top) => Future.wait(top.map((id) => widget.api.item(id))));
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: fetchNews(),
+        future: widget.api.top(widget.endpoint),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return Center(child: CircularProgressIndicator());
           }
-          return ListView(
-            children: (snapshot.data as List<Item>)
-                .map((Item news) => ListTile(
-                    onTap: news.descendants != 0
-                        ? () => launcher.launch(news.url)
-                        : null,
-                    onLongPress: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  Comments(news.kids, widget.api)));
+          final ids = (snapshot.data as List).cast<int>();
+
+          return ListView.builder(
+              itemCount: ids.length,
+              itemBuilder: (c, i) => FutureBuilder(
+                    future: widget.api.item(ids[i]),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return ListTile(title: Text("loading..."));
+                      }
+                      final item = snapshot.data as Item;
+
+                      return ListTile(
+                        onLongPress: () => item.descendants != 0
+                            ? Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (c) =>
+                                        Comments(item.kids, widget.api)))
+                            : null,
+                        onTap: () => launcher.launch(item.url),
+                        title: Text(item.title),
+                        subtitle: Text(
+                            "comments: ${item.descendants} score: ${item.score}"),
+                      );
                     },
-                    subtitle: Row(children: <Widget>[
-                      Text("comments: ${news.descendants} score: ${news.score}")
-                    ]),
-                    title: Text(news.title)))
-                .toList(),
-          );
+                  ));
         });
   }
 }
