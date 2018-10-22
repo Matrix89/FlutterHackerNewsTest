@@ -35,6 +35,7 @@ class _CommentsState extends State<Comments> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               HtmlWidget(html: c.text),
+                              Row(children: [Text("by: ${c.by}")]),
                               Divider(color: Colors.orange),
                               _buildCommentColumn(c.kids),
                             ],

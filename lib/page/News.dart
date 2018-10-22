@@ -47,7 +47,7 @@ class _NewsState extends State<News> {
                         onTap: () => launcher.launch(item.url),
                         title: Text(item.title),
                         subtitle: Text(
-                            "comments: ${item.descendants} score: ${item.score}"),
+                            "comments: ${item.descendants} score: ${item.score} by: ${item.by}"),
                       );
                     },
                   ));

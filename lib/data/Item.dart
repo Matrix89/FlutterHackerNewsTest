@@ -3,6 +3,7 @@ class Item {
   final String title;
   final String url;
   final String text;
+  final String by;
   final int score;
   final int descendants;
   final List<int> kids;
@@ -12,6 +13,7 @@ class Item {
       this.title,
       this.url,
       this.text,
+      this.by,
       this.score,
       this.descendants,
       this.kids});
@@ -21,6 +23,7 @@ class Item {
       title: json['title'],
       url: json['url'],
       text: json['text'] ?? "",
+      by: json['by'] ?? "",
       score: json['score'],
       descendants: json['descendants'] ?? 0,
       kids: (json['kids'] as List)?.cast<int>() ?? List<int>());
